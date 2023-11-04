@@ -1,4 +1,35 @@
 {
-  "users": [],
-  "todos": []
+  "users": [
+    {
+      "todoTask": "task1",
+      "id": 1
+    }
+  ],
+  "todos": [
+    {
+      "taskName": "task1",
+      "isCompleted": false,
+      "id": 1
+    },
+    {
+      "taskName": "tsk 2",
+      "isCompleted": false,
+      "id": 2
+    },
+    {
+      "taskName": "abc",
+      "isCompleted": false,
+      "id": 3
+    },
+    {
+      "taskName": "abcaa",
+      "isCompleted": false,
+      "id": 4
+    },
+    {
+      "taskName": "cc",
+      "isCompleted": false,
+      "id": 5
+    }
+  ]
 }

@@ -1,22 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { server } from "../Config/axios.config";
+
+const getAllTodos = (query) => server.get('/todos',{params:{q:query}}).then((data) => data.data);
 
 const Todolist = () => {
   const [todos, setTodos] = useState([]);
+  const [taskName, setTaskName] = useState([]);
 
-  const handleChange = (e) => {};
+  const toDoList = async (query = '') => {
+    const res = await getAllTodos(query);
+    setTodos(res);
+  };
 
-  const handleDelete = (id) => {};
-  const handleEdit = (content) => {};
-  const handleDone = (status) => {};
+  useEffect(() => {
+    toDoList();
+  }, []);
+
+  const handleChange = (e) => {
+    setTaskName(e.target.value);
+  };
+
+  const handleDelete = (id) => {
+    server.delete(`/todos/${id}`).then((data) => {
+      if (data.status === 200) {
+        toDoList();
+      }
+    });
+  };
+  const handleEdit = (content) => {
+    if(!!content.isCompleted){
+      server.patch(`/todos/${content.id}`,{
+        isCompleted: false,
+      }).then((data) => {
+        if (data.status === 200) {
+          toDoList();
+        }
+      });
+    }
+  };
+  const handleDone = (content) => {
+    server.patch(`/todos/${content.id}`,{
+      isCompleted: true,
+    }).then((data) => {
+      if (data.status === 200) {
+        toDoList();
+      }
+    });
+  };
+
+  const handleSearch =  (e) =>{
+    toDoList(e.target.value);
+  }
 
   const addTask = async (e) => {
     e.preventDefault();
+    if (taskName) {
+      server
+        .post("/todos", {
+          taskName,
+          isCompleted: false,
+        })
+        .then(() => {
+          setTaskName("");
+          toDoList();
+        });
+    }
   };
 
   return (
     <div className="todolist">
-      <div className="search" onSubmit={addTask}>
-        <input type="text" placeholder="Search ex: todo 1" />
+      <div className="search">
+        <input type="text" placeholder="Search ex: todo 1" onChange={handleSearch}/>
       </div>
       <form className="addTask" onSubmit={addTask}>
         <input
@@ -30,8 +84,7 @@ const Todolist = () => {
         {todos?.map((todo, id) => (
           <div
             key={id}
-            className={`list ${todo.isCompleted ? "completed" : ""}`}
-          >
+            className={`list ${todo.isCompleted ? "completed" : ""}`}>
             <p> {todo.taskName}</p>
             <div className="span-btns">
               {!todo.isCompleted && (
@@ -42,15 +95,13 @@ const Todolist = () => {
               <span
                 className="delete-btn"
                 onClick={() => handleDelete(todo.id)}
-                title="delete"
-              >
+                title="delete">
                 x
               </span>
               <span
                 className="edit-btn"
                 onClick={() => handleEdit(todo)}
-                title="edit"
-              >
+                title="edit">
                 ↻
               </span>
             </div>
