@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { server } from "../Config/axios.config";
+import { debounce } from "lodash";
 
 const getAllTodos = (query) => server.get('/todos',{params:{q:query}}).then((data) => data.data);
 
@@ -48,9 +49,9 @@ const Todolist = () => {
     });
   };
 
-  const handleSearch =  (e) =>{
+  const handleSearch =  debounce((e) =>{
     toDoList(e.target.value);
-  }
+  },500);
 
   const addTask = async (e) => {
     e.preventDefault();
