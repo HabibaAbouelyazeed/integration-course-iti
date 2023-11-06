@@ -49,9 +49,20 @@ const Todolist = () => {
     });
   };
 
-  const handleSearch =  debounce((e) =>{
-    toDoList(e.target.value);
-  },500);
+  // const handleSearch =  debounce((e) =>{
+  //   toDoList(e.target.value);
+  // },500);
+
+  const handleSearch =  (e) =>{
+    let timer;
+    if(!timer){
+      timer = setTimeout(() => {
+        toDoList(e.target.value);
+      }, 1000);
+    }else{
+      clearTimeout(timer);
+    }
+  };
 
   const addTask = async (e) => {
     e.preventDefault();
